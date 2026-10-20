@@ -1,0 +1,21 @@
+#!/bin/sh
+# Sube cada commit a GitHub para que Vercel lo despliegue:
+#   main          -> producción
+#   otras ramas   -> preview
+# Para desactivarlo: git config --unset core.hooksPath
+
+git_dir=$(git rev-parse --git-dir)
+
+# No subir en medio de un rebase o un cherry-pick.
+if [ -d "$git_dir/rebase-merge" ] || [ -d "$git_dir/rebase-apply" ] || [ -f "$git_dir/CHERRY_PICK_HEAD" ]; then
+  exit 0
+fi
+
+branch=$(git symbolic-ref --quiet --short HEAD) || exit 0
+
+echo "Subiendo $branch a GitHub para que Vercel lo despliegue..."
+if git rev-parse --abbrev-ref --symbolic-full-name "@{u}" >/dev/null 2>&1; then
+  git push --quiet
+else
+  git push --quiet -u origin "$branch"
+fi || echo "No se pudo subir automáticamente. Corré: git push"
