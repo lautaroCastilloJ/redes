@@ -1,0 +1,8 @@
+{
+  "name": "redes",
+  "private": true,
+  "description": "Apuntes de Redes de Datos",
+  "scripts": {
+    "build": "node scripts/build.mjs"
+  }
+}
